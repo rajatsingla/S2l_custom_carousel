@@ -16,23 +16,23 @@ Creates a carousel which works by scrolling x-axis of an element,
   
   
   Example:-
-  
-  	```
-  	<div>
-  		<ul id="hello">
-			<li>some text</li>
-			<li>some text</li>
-			<li>some text</li>
-			<li>some text</li>
-			<li>some text</li>
-		</ul>
-	</div>	
-	```
-	
-	```javascript
-		var custom_carousel = S2l_custom_carousel("hello","300px");
-		// or
-		var custom_carousel = S2l_custom_carousel("hello","30%");
-	```
+
+```html
+<div>
+	<ul id="hello">
+		<li>some text</li>
+		<li>some text</li>
+		<li>some text</li>
+		<li>some text</li>
+		<li>some text</li>
+	</ul>
+</div>	
+```
+
+```javascript
+	var custom_carousel = S2l_custom_carousel("hello","300px");
+	// or
+	var custom_carousel = S2l_custom_carousel("hello","30%");
+```
   
   Please contribute
