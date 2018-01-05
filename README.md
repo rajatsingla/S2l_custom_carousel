@@ -14,4 +14,25 @@ Creates a carousel which works by scrolling x-axis of an element,
   4. It will bind left and right functionality to the buttons.
   5. It is a minimalist script, it introduces no fancy CSS or classes of itself, only scrolling functionality.
   
+  
+  Example:-
+  
+  	```
+  	<div>
+  		<ul id="hello">
+			<li>some text</li>
+			<li>some text</li>
+			<li>some text</li>
+			<li>some text</li>
+			<li>some text</li>
+		</ul>
+	</div>	
+	```
+	
+	```javascript
+		var custom_carousel = S2l_custom_carousel("hello","300px");
+		// or
+		var custom_carousel = S2l_custom_carousel("hello","30%");
+	```
+  
   Please contribute
