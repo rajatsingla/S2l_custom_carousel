@@ -30,9 +30,11 @@
     // binding this on next and previous arrow callbacks
     this.next_binded=this.next.bind(this);
     this.previous_binded=this.previous.bind(this);
+    this.scroll_handler_binded=this.scroll_handler.bind(this);
     this.addCssOnContainer();
     this.addCssForChild();
-    this.bindClickOnArrows();
+    this.bindEvents();
+    this.disableArrowButtonIfAtExtreme();
   }
 
   S2l_custom_carousel.prototype.addCssOnContainer = function () {
@@ -49,9 +51,10 @@
     this.addStyleNode(styles,style_id,document.head);
   };
 
-  S2l_custom_carousel.prototype.bindClickOnArrows = function () {
+  S2l_custom_carousel.prototype.bindEvents = function () {
     this.addEvent(document.getElementById(this.id+"-right"), 'click', this.next_binded);
     this.addEvent(document.getElementById(this.id+"-left"), 'click',this.previous_binded);
+    this.addEvent(this.container, 'scroll',this.scroll_handler_binded);
   };
 
   S2l_custom_carousel.prototype.previous = function(){
@@ -67,12 +70,16 @@
     // remove events, when element is removed from DOM, playing safe
     this.removeEvent(document.getElementById(this.id+"-right"), 'click', this.next_binded);
     this.removeEvent(document.getElementById(this.id+"-left"), 'click',this.previous_binded);
+    this.removeEvent(this.container, 'scroll',this.scroll_handler_binded);
     // removing style node from head
     var style_node=document.getElementById('style-'+this.id);style_node?style_node.remove():"";
     // removing style from container
     this.addCss({ width: "", "overflow-y": "", "white-space": "", position: ""},this.container);
   };
 
+  S2l_custom_carousel.prototype.scroll_handler = function() {
+      this.disableArrowButtonIfAtExtreme();
+  };
 
 
 
@@ -106,36 +113,52 @@
   }
 
   S2l_custom_carousel.prototype.scroll = function(direction) {
-    var scrolled_value,child,child_width,that,scrollCount,left;
-    that=this;
+    var scrolled_value,child,child_width,left;
     scrolled_value=this.container.scrollLeft;
     child=this.container.children[0];
     if(child){child_width=child.offsetWidth};
 
+    if(!(scrolled_value==undefined || child_width==undefined)){
+      var on_element=scrolled_value/child_width;
+      // whatever element we are scrolled to we scroll to next or previous depending on direction
+      left=(on_element+(direction*1))*child_width;
+      this.scrollTo(scrolled_value,left);
+    };
+  };
 
+  S2l_custom_carousel.prototype.scrollTo = function(fromX,toX) {
+    var that,scrollCount;
+    that=this;
     scrollCount = 0;
     function step () {
         var time=that.time;
         // per second 60 frames
         scrollCount += 1/60;
         var p = scrollCount/time;
-        if(p<1){
+        if(p<1 && that.container.scrollLeft!=toX){
           // provided as browser api to make animations smooth
           window.requestAnimationFrame(step);
           // using sin ease function to calculate how much we should add at each step
-          that.container.scrollLeft=Math.round(scrolled_value + (left-scrolled_value)*Math.sin(p * (Math.PI / 2)));
+          that.container.scrollLeft=Math.round(fromX + (toX-fromX)*Math.sin(p * (Math.PI / 2)));
         }else{
-          that.container.scrollLeft=left;
+          that.container.scrollLeft=toX;
         }
     }
+    window.requestAnimationFrame(step);
+  };
 
+  S2l_custom_carousel.prototype.disableArrowButtonIfAtExtreme = function(left) {
+    if(this.container && this.id && this.container.scrollLeft!=undefined){
+      var left=this.container.scrollLeft;
+      document.getElementById(this.id+"-right").disabled=false;
+      document.getElementById(this.id+"-left").disabled=false;
 
-    if(!(scrolled_value==undefined || child_width==undefined)){
-      var on_element=scrolled_value/child_width;
-      // whatever element we are scrolled to we scroll to next or previous depending on direction
-      left=(on_element+(direction*1))*child_width;
-      window.requestAnimationFrame(step);
-    };
+      if (this.container.scrollWidth-this.container.offsetWidth<=left){
+        document.getElementById(this.id+"-right").disabled="disabled";
+      }else if (this.container && this.id && left<=0) {
+        document.getElementById(this.id+"-left").disabled="disabled";
+      }
+    }
   };
 
 })();
