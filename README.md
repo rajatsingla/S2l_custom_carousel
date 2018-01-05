@@ -34,5 +34,34 @@ Creates a carousel which works by scrolling x-axis of an element,
 	// or
 	var custom_carousel = S2l_custom_carousel("hello","30%");
 ```
+
+Usage in ember App:
+```javascript
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  custom_crousel: null,
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.set('custom_crousel', new S2l_custom_carousel("hello","30%"));
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    if(this.get('custom_crousel')){
+      this.get('custom_crousel').removecarousel();
+    }
+  },
+
+});
+```
+
+Available methods on carousel object
+* previous   //move carousel to previous element
+* next   //move carousel to next element
+* removecarousel
+* disableArrowButtonIfAtExtreme
+* scrollTo(fromX,toX)  //will scroll carousel to given value
   
-  Please contribute
+ Please contribute (add event callbacks like scrolled)
