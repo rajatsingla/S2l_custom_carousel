@@ -26,6 +26,8 @@ Creates a carousel which works by scrolling x-axis of an element,
 		<li>some text</li>
 		<li>some text</li>
 	</ul>
+	<button id="hello-left"> ❮ </button>
+	<button id="hello-right"> ❯ </button>
 </div>	
 ```
 
