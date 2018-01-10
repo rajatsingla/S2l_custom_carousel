@@ -119,7 +119,10 @@ https://github.com/rajatsingla/S2l_custom_carousel
   };
 
   S2l_custom_carousel.prototype.removeEvent = function (el, type, handler) {
-    if (el.detachEvent) el.detachEvent('on'+type, handler); else el.removeEventListener(type, handler);
+    if(el)
+    {
+      if (el.detachEvent) el.detachEvent('on'+type, handler); else el.removeEventListener(type, handler);
+    }
   }
 
   S2l_custom_carousel.prototype.scroll = function(direction) {
