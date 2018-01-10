@@ -1,4 +1,5 @@
 /**
+https://github.com/rajatsingla/S2l_custom_carousel
 @description
 	Creates a carousel which works by scrolling x-axis of an element,
   and you can also choose to give x-scroll bar to user,
@@ -24,9 +25,9 @@
   window.S2l_custom_carousel = function(containerID,width) {
     this.id=containerID;
     this.width=width || "100%";
-    this.time=0.5;
+    this.time=0.2;
   	this.container = document.getElementById(containerID);
-    if(!this.id || !this.container){console.log("no ID provided");return ""};
+    if(!this.id || !this.container){console.log("no ID provided");return {}};
     // binding this on next and previous arrow callbacks
     this.next_binded=this.next.bind(this);
     this.previous_binded=this.previous.bind(this);
@@ -54,6 +55,7 @@
   S2l_custom_carousel.prototype.bindEvents = function () {
     this.addEvent(document.getElementById(this.id+"-right"), 'click', this.next_binded);
     this.addEvent(document.getElementById(this.id+"-left"), 'click',this.previous_binded);
+    this.ticking=false;
     this.addEvent(this.container, 'scroll',this.scroll_handler_binded);
   };
 
@@ -78,7 +80,15 @@
   };
 
   S2l_custom_carousel.prototype.scroll_handler = function() {
-      this.disableArrowButtonIfAtExtreme();
+      // throttling scroll events
+      var that = this;
+      if (!that.ticking){
+        setTimeout(function(){
+          that.disableArrowButtonIfAtExtreme.call(that);
+          that.ticking = false;
+        },66);
+        that.ticking = true;
+      }
   };
 
 
@@ -119,7 +129,7 @@
     if(child){child_width=child.offsetWidth};
 
     if(!(scrolled_value==undefined || child_width==undefined)){
-      var on_element=scrolled_value/child_width;
+      var on_element=Math.round(scrolled_value/child_width);
       // whatever element we are scrolled to we scroll to next or previous depending on direction
       left=(on_element+(direction*1))*child_width;
       this.scrollTo(scrolled_value,left);
@@ -152,10 +162,11 @@
       var left=this.container.scrollLeft;
       document.getElementById(this.id+"-right").disabled=false;
       document.getElementById(this.id+"-left").disabled=false;
-
-      if (this.container.scrollWidth-this.container.offsetWidth<=left){
+      // added 3 to handle cases with elements having width in float points
+      //  and remaining 2 3 pixels avoid disabling button
+      if (this.container.scrollWidth-this.container.offsetWidth<=left+3){
         document.getElementById(this.id+"-right").disabled="disabled";
-      }else if (this.container && this.id && left<=0) {
+      }else if (this.container && this.id && left<=3) {
         document.getElementById(this.id+"-left").disabled="disabled";
       }
     }
